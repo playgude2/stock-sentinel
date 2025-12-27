@@ -1,0 +1,20 @@
+fastapi==0.115.5
+uvicorn==0.32.1
+twilio==9.3.7
+pydantic==2.10.1
+python-multipart==0.0.18
+google-generativeai==0.8.3
+redis==5.2.0
+
+# Database
+sqlalchemy==2.0.25
+alembic==1.13.1
+psycopg2-binary==2.9.9
+
+# Background Tasks
+celery==5.3.6
+celery[redis]==5.3.6
+
+# Stock Data
+yfinance==0.2.48
+pytz==2025.2

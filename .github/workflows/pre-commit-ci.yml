@@ -1,0 +1,40 @@
+name: Code Quality Checks
+
+on:
+  pull_request:
+
+jobs:
+  code_quality:
+    name: Run Linting & Type Checking
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.1"
+
+      - name: 📦 Install Dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.dev.txt
+
+      - name: 🎨 Run Black (Code Formatting)
+        run: |
+          source venv/bin/activate
+          black --check .
+
+      - name: 🔍 Run Ruff (Linting & Fixes)
+        run: |
+          source venv/bin/activate
+          ruff check .
+
+      - name: 🔬 Run Mypy (Type Checking)
+        run: |
+          source venv/bin/activate
+          mypy --ignore-missing-imports .

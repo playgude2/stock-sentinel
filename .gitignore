@@ -1,0 +1,110 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.uv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+.tox/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Environment Variables
+docker/env/.env
+.env.local
+.env.*.local
+*.env
+
+# Docker
+docker/volumes/
+*.log
+
+# Database
+*.db
+*.sqlite3
+*.sql
+
+# Alembic (keep migration files but ignore local versions during dev)
+# Uncomment below if you want to exclude migration files:
+# alembic/versions/*.py
+# !alembic/versions/__init__.py
+
+# Redis
+dump.rdb
+
+# Logs
+logs/
+*.log
+*.out
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+tmp/
+temp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ngrok
+ngrok
+ngrok.exe
+
+# Coverage reports
+.coverage
+coverage.xml
+*.cover
+
+# Local development
+local/
+scratch/
