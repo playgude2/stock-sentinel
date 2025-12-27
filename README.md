@@ -24,7 +24,7 @@ See Stock Sentinel in action through these WhatsApp conversation examples:
 ### 1️⃣ Getting Help - Your Personal Trading Assistant
 
 <p align="center">
-  <img src="public/Screenshot 2025-12-27 at 4.08.49 PM.png" alt="Help Command" width="600"/>
+  <img src="public/help-command.png" alt="Help Command" width="600"/>
 </p>
 
 **What's happening here:**
@@ -46,7 +46,7 @@ When you send `help`, the bot responds with a friendly, comprehensive guide show
 ### 2️⃣ Real-Time Stock Price Lookup
 
 <p align="center">
-  <img src="public/Screenshot 2025-12-27 at 4.09.05 PM.png" alt="Price Command" width="600"/>
+  <img src="public/price-command.png" alt="Price Command" width="600"/>
 </p>
 
 **What's happening here:**
@@ -74,7 +74,7 @@ The bot instantly responds with:
 ### 3️⃣ Setting Up Stock Alerts - Smart Duplicate Detection
 
 <p align="center">
-  <img src="public/Screenshot 2025-12-27 at 4.09.39 PM.png" alt="Add Alert Command" width="600"/>
+  <img src="public/add-alert-command.png" alt="Add Alert Command" width="600"/>
 </p>
 
 **What's happening here:**
@@ -119,7 +119,7 @@ Bot confirms: "✅ 3 Alerts created successfully!"
 ### 4️⃣ Managing Your Active Alerts
 
 <p align="center">
-  <img src="public/Screenshot 2025-12-27 at 4.09.57 PM.png" alt="List Alerts Command" width="600"/>
+  <img src="public/list-alerts-command.png" alt="List Alerts Command" width="600"/>
 </p>
 
 **What's happening here:**
