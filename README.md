@@ -17,6 +17,201 @@ Stock Sentinel is a professional intraday stock trading alert system via WhatsAp
 
 ---
 
+## **📱 Screenshots - WhatsApp Interface**
+
+See Stock Sentinel in action through these WhatsApp conversation examples:
+
+### 1️⃣ Getting Help - Your Personal Trading Assistant
+
+<p align="center">
+  <img src="public/Screenshot 2025-12-27 at 4.08.49 PM.png" alt="Help Command" width="600"/>
+</p>
+
+**What's happening here:**
+When you send `help`, the bot responds with a friendly, comprehensive guide showing all available commands. The interface is designed to be conversational and easy to understand:
+
+- **Stock Price Queries** - Check real-time prices instantly
+- **Alert Setup** - Configure price drop alerts (📉), spike alerts (📈), and intraday movement tracking (⚡)
+- **Alert Management** - List and remove your active alerts
+- **Natural Language** - Just chat normally if you have questions!
+
+**Key Features Shown:**
+- ✅ User-friendly emoji-based navigation
+- ✅ Clear examples for each command
+- ✅ Market hours information (9:15 AM - 3:30 PM IST)
+- ✅ AI-powered conversational fallback
+
+---
+
+### 2️⃣ Real-Time Stock Price Lookup
+
+<p align="center">
+  <img src="public/Screenshot 2025-12-27 at 4.09.05 PM.png" alt="Price Command" width="600"/>
+</p>
+
+**What's happening here:**
+User sends: `price TCS`
+
+The bot instantly responds with:
+- **Current Price**: ₹3,320.00
+- **Previous Close**: ₹3,370.00
+- **Change**: -1.48% 📉
+
+**Behind the Scenes:**
+1. Request hits the FastAPI webhook endpoint `/whatsapp`
+2. Command parser identifies this as a `price` query
+3. Yahoo Finance API fetches latest TCS stock data
+4. Redis caches the result for 60 seconds (configurable)
+5. Response formatted and sent via Twilio WhatsApp API
+
+**Technical Details:**
+- **Cache Strategy**: Multi-level (Redis → PostgreSQL → Yahoo Finance)
+- **Response Time**: ~200ms (cached) / ~800ms (fresh fetch)
+- **Data Source**: Yahoo Finance API for Indian stocks (.NS suffix)
+
+---
+
+### 3️⃣ Setting Up Stock Alerts - Smart Duplicate Detection
+
+<p align="center">
+  <img src="public/Screenshot 2025-12-27 at 4.09.39 PM.png" alt="Add Alert Command" width="600"/>
+</p>
+
+**What's happening here:**
+
+**Message 1 (Warning):**
+User tries: `alert add TCS -8`
+Bot detects: "⚠️ You already have active 8% drop alerts for TCS"
+- Shows existing Alert ID: #1
+- Suggests using `alert remove TCS` to clear all TCS alerts first
+
+**Message 2 (Success):**
+User sends: `alert add TCS +8`
+Bot confirms: "✅ 3 Alerts created successfully!"
+
+**The 3 alerts created:**
+1. **Gap Up Alert** (ID: #2)
+   - Triggers if TCS opens 8% above yesterday's close
+   - Checks once at market open (9:15 AM IST)
+
+2. **1-Hour Spike Alert** (ID: #3)
+   - Triggers if TCS spikes 8% from lowest price in last 60 minutes
+   - Checked every 5 minutes during market hours
+
+3. **2-Hour Spike Alert** (ID: #4)
+   - Triggers if TCS spikes 8% from lowest price in last 120 minutes
+   - Provides longer-term perspective on price movements
+
+**What the bot explains:**
+- 🎯 Detailed description of each alert's behavior
+- ⏱️ Frequency: "Every 15 minutes" (configurable via `ALERT_CHECK_INTERVAL`)
+- 🕒 Active during: Market hours only (9:15 AM - 3:30 PM IST)
+- 🔔 Alerts stay active until manually removed
+
+**Technical Implementation:**
+- **Celery Beat Scheduler**: Triggers periodic alert checks
+- **Celery Workers**: Process alert evaluation in background
+- **PostgreSQL**: Stores alert configurations with user_phone mapping
+- **Alert Cooldown**: 1-hour cooldown prevents spam (configurable)
+
+---
+
+### 4️⃣ Managing Your Active Alerts
+
+<p align="center">
+  <img src="public/Screenshot 2025-12-27 at 4.09.57 PM.png" alt="List Alerts Command" width="600"/>
+</p>
+
+**What's happening here:**
+User sends: `alert list`
+
+The bot shows all active alerts with:
+- **Alert IDs**: #4, #3, #2, #1
+- **Stock Symbol**: TCS
+- **Alert Types**:
+  - 2h Spike 8% (monitors 2-hour rolling window)
+  - 1h Spike 8% (monitors 1-hour rolling window)
+  - Gap Up 8% (market open gap detection)
+  - 2h Drop 8% (from an earlier setup)
+- **Total Count**: 4 alert(s)
+
+**How to Remove Alerts:**
+```
+alert remove 4       → Removes specific alert #4
+alert remove TCS     → Removes all 4 TCS alerts at once
+```
+
+**Database Schema:**
+```python
+class Alert(Base):
+    id: int
+    user_phone: str              # whatsapp:+919730526650
+    stock_symbol: str            # TCS
+    alert_type: AlertType        # SPIKE_1H, SPIKE_2H, GAP_UP, etc.
+    threshold_percent: float     # 8.0
+    created_at: datetime
+    last_triggered_at: datetime  # For cooldown logic
+```
+
+---
+
+## **🔧 How It All Works Together**
+
+### Architecture Flow:
+
+```
+┌─────────────┐         ┌──────────────┐         ┌─────────────┐
+│   WhatsApp  │ ─────>  │  Twilio API  │ ─────>  │  FastAPI    │
+│   Message   │         │   Webhook    │         │   Server    │
+└─────────────┘         └──────────────┘         └─────────────┘
+                                                         │
+                                                         ▼
+                                               ┌──────────────────┐
+                                               │ Command Parser   │
+                                               │ (price/alert/AI) │
+                                               └──────────────────┘
+                                                         │
+                        ┌────────────────────────────────┼────────────────┐
+                        ▼                                ▼                ▼
+                ┌──────────────┐              ┌──────────────┐   ┌──────────┐
+                │ Stock Service│              │Alert Service │   │Gemini AI │
+                │(Yahoo Finance│              │(CRUD + Check)│   │ Service  │
+                └──────────────┘              └──────────────┘   └──────────┘
+                        │                                │
+                        ▼                                ▼
+                ┌──────────────┐              ┌──────────────────┐
+                │ Redis Cache  │              │   PostgreSQL     │
+                │ (60s TTL)    │              │ (Persistent DB)  │
+                └──────────────┘              └──────────────────┘
+                                                         ▲
+                                                         │
+                                               ┌─────────┴─────────┐
+                                               │  Celery Beat      │
+                                               │  (Scheduler)      │
+                                               └───────────────────┘
+                                                         │
+                                                         ▼
+                                               ┌───────────────────┐
+                                               │  Celery Workers   │
+                                               │ (Alert Checking)  │
+                                               └───────────────────┘
+```
+
+### Alert Monitoring Workflow:
+
+1. **User Creates Alert** → Stored in PostgreSQL
+2. **Celery Beat** (every 5 min) → Triggers alert check task
+3. **Celery Worker** → Fetches all active alerts from DB
+4. **For each alert:**
+   - Fetch current stock price (with caching)
+   - Calculate rolling window high/low (for DROP/SPIKE alerts)
+   - Check if threshold crossed
+   - Verify cooldown period (default: 1 hour)
+5. **If triggered** → Send WhatsApp notification via Twilio
+6. **Update `last_triggered_at`** → Prevents duplicate notifications
+
+---
+
 ## **Getting Started**
 
 ### **Prerequisites**

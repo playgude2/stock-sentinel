@@ -22,34 +22,39 @@ class HelpHandler(BaseCommandHandler):
         Returns:
             str: Help message with command reference
         """
-        return """📚 *Command Reference*
+        return """👋 *Hi! I'm your Stock Alert Bot*
 
-*Stock Prices:*
-• `price <SYMBOL>` - Get current stock price
-  Example: price TCS
+📊 *Check Stock Price*
+Just type: `price TCS`
+I'll show you the latest price and how much it changed today!
 
-*Stock Alerts:*
-• `alert add <SYMBOL> <PERCENT>` - Add price drop alert
-  Examples:
-  - alert add TCS -7
-  - alert add TCS -8
-  - alert add TCS -9
-  - alert add TCS -10
+🚨 *Set Up Alerts*
+I'll notify you when stocks hit your targets:
 
-• `alert add <SYMBOL> intraday` - Monitor 1% moves in 1 hour
-  Example: alert add INFY intraday
+*Price Drops 📉*
+`alert add TCS -8`
+→ I'll alert you if TCS drops 8% (works with -7, -8, -9, -10)
 
-• `alert list` - List your active alerts
+*Price Spikes 📈*
+`alert add TCS +8`
+→ I'll alert you if TCS jumps 8% (works with +5, +7, +8, +9, +10)
 
-• `alert remove <ID>` - Remove specific alert
-  Example: alert remove 42
+*Intraday Moves ⚡*
+`alert add INFY intraday`
+→ Get notified on 1% moves within 1 hour
 
-• `alert remove <SYMBOL>` - Remove all alerts for stock
-  Example: alert remove TCS
+*See Your Alerts 📋*
+`alert list`
+→ Shows all your active alerts
 
-*General:*
-• `help` - Show this help message
-• Or just chat naturally with me!
+*Remove Alerts 🗑️*
+`alert remove 42` - Remove alert #42
+`alert remove TCS` - Remove all TCS alerts
 
----
-💡 Tip: Alerts stay active until you remove them."""
+📱 *Ask Me Anything!*
+You can also just chat normally - I'll understand!
+
+💡 *Good to know:*
+• Alerts work during market hours (9:15 AM - 3:30 PM IST)
+• I monitor stocks every minute
+• Your alerts stay active until you remove them"""
